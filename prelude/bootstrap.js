@@ -51,7 +51,12 @@ if (process.argv[1] !== 'PKG_DUMMY_ENTRYPOINT') {
   throw new Error('PKG_DUMMY_ENTRYPOINT EXPECTED');
 }
 
-if (process.env.PKG_EXECPATH === EXECPATH) {
+if (process.send) {
+  // if process.send is set, it means the process was forked,
+  // and the runtime file is the third argument
+  process.argv[1] = process.argv[2];
+  process.argv.splice(2, 1);
+} else if (process.env.PKG_EXECPATH === EXECPATH) {
   process.argv.splice(1, 1);
 } else {
   process.argv[1] = DEFAULT_ENTRYPOINT;
